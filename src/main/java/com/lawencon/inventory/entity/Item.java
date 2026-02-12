@@ -1,30 +1,21 @@
 package com.lawencon.inventory.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "items")
+@Table(name = "item")
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Item name is mandatory")
-    @Size(max = 255)
     @Column(nullable = false)
     private String name;
 
-    @Size(max = 1000)
-    @Column(length = 1000)
-    private String description;
-
-    @NotNull(message = "Stock is mandatory")
-    @Column(nullable = false)
-    private Integer stock = 0;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -42,19 +33,11 @@ public class Item {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

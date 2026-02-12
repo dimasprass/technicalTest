@@ -1,10 +1,17 @@
 package com.lawencon.inventory.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 public class OrderResponse {
+
     private Long id;
+    private String orderNo;
+    private BigDecimal price;
+    private Integer quantity;
     private Long itemId;
     private String itemName;
-    private Integer quantity;
+    private LocalDateTime orderDate;
 
     public Long getId() {
         return id;
@@ -12,6 +19,30 @@ public class OrderResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Long getItemId() {
@@ -30,11 +61,11 @@ public class OrderResponse {
         this.itemName = itemName;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 }

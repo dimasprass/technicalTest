@@ -1,8 +1,8 @@
 package com.lawencon.inventory.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -12,15 +12,21 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Item is mandatory")
+    @Column(nullable = false, unique = true)
+    private String orderNo;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private Integer quantity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @NotNull(message = "Quantity is mandatory")
-    @Positive(message = "Quantity must be positive")
     @Column(nullable = false)
-    private Integer quantity;
+    private LocalDateTime orderDate = LocalDateTime.now();
 
     public Long getId() {
         return id;
@@ -28,6 +34,30 @@ public class Order {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Item getItem() {
@@ -38,11 +68,11 @@ public class Order {
         this.item = item;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 }

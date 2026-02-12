@@ -1,20 +1,12 @@
 package com.lawencon.inventory.dto;
 
+import java.math.BigDecimal;
+
 public class ItemResponse {
+
     private Long id;
     private String name;
-    private String description;
-    private Integer remainingStock;
-
-    public ItemResponse() {
-    }
-
-    public ItemResponse(Long id, String name, String description, Integer remainingStock) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.remainingStock = remainingStock;
-    }
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -32,19 +24,11 @@ public class ItemResponse {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getRemainingStock() {
-        return remainingStock;
-    }
-
-    public void setRemainingStock(Integer remainingStock) {
-        this.remainingStock = remainingStock;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

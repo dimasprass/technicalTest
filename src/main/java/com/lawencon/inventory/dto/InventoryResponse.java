@@ -1,13 +1,12 @@
 package com.lawencon.inventory.dto;
 
-import com.lawencon.inventory.entity.Inventory.Type;
-
 public class InventoryResponse {
+
     private Long id;
     private Long itemId;
     private String itemName;
-    private Type type;
     private Integer quantity;
+    private String type;
 
     public Long getId() {
         return id;
@@ -33,19 +32,19 @@ public class InventoryResponse {
         this.itemName = itemName;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public Integer getQuantity() {
         return quantity;
     }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

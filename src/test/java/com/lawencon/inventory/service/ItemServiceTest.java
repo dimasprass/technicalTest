@@ -5,19 +5,21 @@ import com.lawencon.inventory.dto.ItemResponse;
 import com.lawencon.inventory.entity.Item;
 import com.lawencon.inventory.exception.ResourceNotFoundException;
 import com.lawencon.inventory.repository.ItemRepository;
+import com.lawencon.inventory.service.impl.ItemServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -28,80 +30,89 @@ class ItemServiceTest {
     private ItemRepository itemRepository;
 
     @InjectMocks
-    private ItemService itemService;
+    private ItemServiceImpl itemService;
+
+    @Test
+    void save_returnsResponse() {
+        ItemRequest request = new ItemRequest();
+        request.setName("Item1");
+        request.setPrice(BigDecimal.TEN);
+        Item saved = new Item();
+        saved.setId(1L);
+        saved.setName("Item1");
+        saved.setPrice(BigDecimal.TEN);
+        when(itemRepository.save(any(Item.class))).thenReturn(saved);
+
+        ItemResponse response = itemService.save(request);
+
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getName()).isEqualTo("Item1");
+        assertThat(response.getPrice()).isEqualByComparingTo(BigDecimal.TEN);
+    }
 
     @Test
     void getById_whenExists_returnsResponse() {
         Item item = new Item();
         item.setId(1L);
-        item.setName("Test Item");
-        item.setDescription("Desc");
-        item.setStock(10);
+        item.setName("Item1");
+        item.setPrice(BigDecimal.ONE);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
         ItemResponse response = itemService.getById(1L);
 
-        assertNotNull(response);
-        assertEquals(1L, response.getId());
-        assertEquals("Test Item", response.getName());
-        assertEquals(10, response.getRemainingStock());
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getName()).isEqualTo("Item1");
     }
 
     @Test
-    void getById_whenNotExists_throwsResourceNotFoundException() {
+    void getById_whenNotExists_throws() {
         when(itemRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> itemService.getById(999L));
+        assertThatThrownBy(() -> itemService.getById(999L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("999");
     }
 
     @Test
-    void save_persistsItem() {
-        ItemRequest request = new ItemRequest();
-        request.setName("New Item");
-        request.setDescription("Description");
-        request.setStock(5);
-
-        Item saved = new Item();
-        saved.setId(1L);
-        saved.setName(request.getName());
-        saved.setDescription(request.getDescription());
-        saved.setStock(request.getStock());
-        when(itemRepository.save(any(Item.class))).thenReturn(saved);
-
-        ItemResponse response = itemService.save(request);
-
-        assertNotNull(response);
-        assertEquals(1L, response.getId());
-        assertEquals("New Item", response.getName());
-        assertEquals(5, response.getRemainingStock());
-    }
-
-    @Test
-    void list_returnsPaginatedResponse() {
+    void findAll_returnsPage() {
         Item item = new Item();
         item.setId(1L);
-        item.setName("Item");
-        item.setStock(1);
-        Page<Item> page = new PageImpl<>(List.of(item));
-        when(itemRepository.findAll(any(Pageable.class))).thenReturn(page);
+        item.setName("Item1");
+        item.setPrice(BigDecimal.ONE);
+        when(itemRepository.findAll(any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(item), PageRequest.of(0, 10), 1));
 
-        var result = itemService.list(org.springframework.data.domain.PageRequest.of(0, 10));
+        var page = itemService.findAll(PageRequest.of(0, 10));
 
-        assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals(1L, result.getContent().get(0).getId());
+        assertThat(page.getContent()).hasSize(1);
+        assertThat(page.getContent().get(0).getName()).isEqualTo("Item1");
     }
 
     @Test
-    void delete_whenExists_deletes() {
+    void update_whenExists_returnsResponse() {
+        Item existing = new Item();
+        existing.setId(1L);
+        existing.setName("Old");
+        existing.setPrice(BigDecimal.ONE);
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(itemRepository.save(any(Item.class))).thenAnswer(i -> i.getArgument(0));
+
+        ItemRequest request = new ItemRequest();
+        request.setName("Updated");
+        request.setPrice(BigDecimal.valueOf(20));
+        ItemResponse response = itemService.update(1L, request);
+
+        assertThat(response.getName()).isEqualTo("Updated");
+        assertThat(response.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(20));
+    }
+
+    @Test
+    void deleteById_whenExists_deletes() {
         when(itemRepository.existsById(1L)).thenReturn(true);
-        itemService.delete(1L);
-        verify(itemRepository).deleteById(1L);
-    }
+        doNothing().when(itemRepository).deleteById(1L);
 
-    @Test
-    void delete_whenNotExists_throws() {
-        when(itemRepository.existsById(999L)).thenReturn(false);
-        assertThrows(ResourceNotFoundException.class, () -> itemService.delete(999L));
+        itemService.deleteById(1L);
+
+        verify(itemRepository).deleteById(1L);
     }
 }

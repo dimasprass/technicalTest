@@ -1,20 +1,19 @@
 package com.lawencon.inventory.dto;
 
-import com.lawencon.inventory.entity.Inventory.Type;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 public class InventoryRequest {
 
-    @NotNull(message = "Item ID is mandatory")
+    @NotNull(message = "Item ID is required")
     private Long itemId;
 
-    @NotNull(message = "Type is mandatory (T for Top Up, W for Withdrawal)")
-    private Type type;
-
-    @NotNull(message = "Quantity is mandatory")
-    @Positive(message = "Quantity must be positive")
+    @NotNull(message = "Quantity is required")
+    @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
+
+    @NotNull(message = "Type is required")
+    private String type; // IN or OUT
 
     public Long getItemId() {
         return itemId;
@@ -24,19 +23,19 @@ public class InventoryRequest {
         this.itemId = itemId;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public Integer getQuantity() {
         return quantity;
     }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

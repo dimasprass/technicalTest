@@ -1,38 +1,26 @@
 package com.lawencon.inventory.exception;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ErrorResponse {
-    private Instant timestamp;
+
+    private LocalDateTime timestamp;
     private int status;
     private String error;
     private String message;
     private String path;
-    private List<String> validationErrors;
+    private List<String> details;
 
     public ErrorResponse() {
+        this.timestamp = LocalDateTime.now();
     }
 
-    public ErrorResponse(int status, String error, String message, String path) {
-        this.timestamp = Instant.now();
-        this.status = status;
-        this.error = error;
-        this.message = message;
-        this.path = path;
-    }
-
-    public static ErrorResponse withValidation(int status, String error, String path, List<String> validationErrors) {
-        ErrorResponse r = new ErrorResponse(status, error, "Validation failed", path);
-        r.setValidationErrors(validationErrors);
-        return r;
-    }
-
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -68,11 +56,11 @@ public class ErrorResponse {
         this.path = path;
     }
 
-    public List<String> getValidationErrors() {
-        return validationErrors;
+    public List<String> getDetails() {
+        return details;
     }
 
-    public void setValidationErrors(List<String> validationErrors) {
-        this.validationErrors = validationErrors;
+    public void setDetails(List<String> details) {
+        this.details = details;
     }
 }
